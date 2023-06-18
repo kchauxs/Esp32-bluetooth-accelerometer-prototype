@@ -5,6 +5,7 @@
 
 #include "Sensors.h"
 #include "Storage.h"
+#include "Utils.h"
 #include "BluetoothService.h"
 #include "Callbacks.hpp"
 
@@ -13,7 +14,7 @@ BluetoothSerial SerialBT;
 Context ctx;
 Storage storage(&ctx);
 Sensors sensors(&ctx);
-
+Utils utils(&ctx);
 BluetoothService bluetoothService(&ctx, &SerialBT);
 
 void setup(void)
@@ -34,17 +35,18 @@ void setup(void)
 
   // STORAGE
   storage.init();
-  
+
   if (!storage.read())
     storage.save();
-
-  // BLUETOOTH
-  bluetoothService.init();
 
   // SENSORS
   sensors.initMPU();
   digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
+  delay(500);
+
+  // BLUETOOTH
+  bluetoothService.init();
+  delay(500);
 }
 
 void loop()
@@ -54,7 +56,7 @@ void loop()
   if (millis() - lastRead > ctx.sendInterval)
   {
     sensors.readMPU();
-    bluetoothService.send(sensors.getPayload());
+    bluetoothService.send(utils.buildPayload());
     lastRead = millis();
   }
 

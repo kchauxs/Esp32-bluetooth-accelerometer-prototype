@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
-#include <ArduinoJson.h>
+
 #include <Wire.h>
 
 #include "Config.h"
@@ -20,7 +20,6 @@ public:
     Sensors(Context *ctx);
     void initMPU();
     void readMPU();
-    String getPayload();
 };
 
 extern Sensors sensors;
