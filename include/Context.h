@@ -22,11 +22,13 @@ public:
         float z;
     } gyro;
 
-    unsigned long readInterval = DEFAULT_READ_INTERVAL;
+    unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
 
     bool wifiIsSaved = false;
     String WiFiSSID;
     String WiFiPass;
+
+    String bluetoothName = BLUETOOTH_NAME;
 
     Context(){};
 };

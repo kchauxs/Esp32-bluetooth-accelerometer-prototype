@@ -1,23 +1,25 @@
 #include <Arduino.h>
-#include "BluetoothSerial.h"
-
+#include <SPIFFS.h>
 #include "Config.h"
 #include "Context.h"
 
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
-
 #include "Sensors.h"
+#include "Storage.h"
+#include "BluetoothService.h"
+#include "Callbacks.hpp"
 
 BluetoothSerial SerialBT;
 
 Context ctx;
+Storage storage(&ctx);
 Sensors sensors(&ctx);
+
+BluetoothService bluetoothService(&ctx, &SerialBT);
 
 void setup(void)
 {
   delay(1000);
+  setCpuFrequencyMhz(240);
 
 #if SERIAL_DEBUG
   Serial.begin(115200);
@@ -30,8 +32,14 @@ void setup(void)
   digitalWrite(LED_BUILTIN, LOW);
   delay(50);
 
+  // STORAGE
+  storage.init();
+  
+  if (!storage.read())
+    storage.save();
+
   // BLUETOOTH
-  SerialBT.begin(BLUETOOTH_NAME);
+  bluetoothService.init();
 
   // SENSORS
   sensors.initMPU();
@@ -42,36 +50,14 @@ void setup(void)
 void loop()
 {
   static unsigned long lastRead = 0;
-  static String message = "";
-
   // Send data via bluetooth
-  if (millis() - lastRead > ctx.readInterval)
+  if (millis() - lastRead > ctx.sendInterval)
   {
     sensors.readMPU();
-    SerialBT.println(sensors.getPayload());
+    bluetoothService.send(sensors.getPayload());
     lastRead = millis();
   }
 
-  // Blink LED
-
-  if (SerialBT.available())
-  {
-    char incomingChar = SerialBT.read();
-
-    if (incomingChar != '\n')
-      message += String(incomingChar);
-    else
-      message = "";
-
-    Serial.write(incomingChar);
-  }
-
-  if (message == "led_on")
-  {
-    digitalWrite(LED_BUILTIN, HIGH);
-  }
-  else if (message == "led_off")
-  {
-    digitalWrite(LED_BUILTIN, LOW);
-  }
+  // Receive data via bluetooth
+  bluetoothService.receive(receiveBluetootCallback);
 }
