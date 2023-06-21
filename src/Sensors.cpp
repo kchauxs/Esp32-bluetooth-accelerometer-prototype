@@ -7,12 +7,15 @@ Sensors::Sensors(Context *ctx)
 
 void Sensors::initMPU()
 {
+    static bool tick = false;
     if (!_mpu.begin())
     {
         Serial.println("Error: Failed to find MPU6050 chip");
         while (1)
         {
-            delay(10);
+            tick = !tick;
+            digitalWrite(LED_BUILTIN, tick);
+            delay(500);
         }
     }
     Serial.println("Info: MPU6050 Found! ✅");

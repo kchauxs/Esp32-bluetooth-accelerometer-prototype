@@ -6,9 +6,9 @@ BluetoothService::BluetoothService(Context *ctx, BluetoothSerial *SerialBT)
     this->_serialBT = SerialBT;
 }
 
-void BluetoothService::init()
+void BluetoothService::init(String localName)
 {
-    this->_serialBT->begin(BLUETOOTH_NAME);
+    this->_serialBT->begin(localName);
 }
 
 void BluetoothService::send(String message)

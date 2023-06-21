@@ -42,9 +42,9 @@ void receiveBluetootCallback(String message)
         return;
     }
 
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, HIGH);
     delay(60);
-    
+
 #if SERIAL_DEBUG
     Serial.println("Message received: ");
     serializeJsonPretty(doc, Serial);
@@ -57,8 +57,7 @@ void receiveBluetootCallback(String message)
         if (checkSendInterval(sendInterval))
             storage.save();
     }
-
-    if (doc.containsKey("bluetoothName"))
+    else if (doc.containsKey("bluetoothName"))
     {
         String bluetoothName = doc["bluetoothName"];
         if (checkBluetoothName(bluetoothName))
@@ -66,5 +65,5 @@ void receiveBluetootCallback(String message)
     }
 
     doc.clear();
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LED_BUILTIN, LOW);
 }

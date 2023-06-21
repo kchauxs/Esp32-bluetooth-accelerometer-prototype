@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 // DEVICE CONFIG
-#define SERIAL_DEBUG true
+#define SERIAL_DEBUG false
 
 // DATA CONFIG
 #define DEFAULT_SEND_INTERVAL 3000

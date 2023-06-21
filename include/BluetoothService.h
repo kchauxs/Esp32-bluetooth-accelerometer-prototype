@@ -19,7 +19,7 @@ private:
 
 public:
     BluetoothService(Context *ctx, BluetoothSerial *SerialBT);
-    void init();
+    void init(String localName = BLUETOOTH_NAME);
     void send(String message);
     String receive();
 

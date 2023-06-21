@@ -20,7 +20,6 @@ BluetoothService bluetoothService(&ctx, &SerialBT);
 void setup(void)
 {
   delay(1000);
-  setCpuFrequencyMhz(240);
 
 #if SERIAL_DEBUG
   Serial.begin(115200);
@@ -30,8 +29,12 @@ void setup(void)
 
   // LED AUX
   pinMode(LED_BUILTIN, OUTPUT);
+
   digitalWrite(LED_BUILTIN, LOW);
   delay(50);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(50);
+  digitalWrite(LED_BUILTIN, LOW);
 
   // STORAGE
   storage.init();
@@ -41,11 +44,10 @@ void setup(void)
 
   // SENSORS
   sensors.initMPU();
-  digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
 
   // BLUETOOTH
-  bluetoothService.init();
+  bluetoothService.init(ctx.bluetoothName);
   delay(500);
 }
 
