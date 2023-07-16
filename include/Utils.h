@@ -17,4 +17,5 @@ public:
     String buildPayload();
 };
 
+extern Utils utils;
 #endif // __UTILS_H__

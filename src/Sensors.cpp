@@ -7,18 +7,14 @@ Sensors::Sensors(Context *ctx)
 
 void Sensors::initMPU()
 {
-    static bool tick = false;
     if (!_mpu.begin())
     {
-        Serial.println("Error: Failed to find MPU6050 chip");
+        Serial.println("Error: Failed to find MPU6050 chip ✖️");
+        digitalWrite(LED_BUILTIN, HIGH);
         while (1)
-        {
-            tick = !tick;
-            digitalWrite(LED_BUILTIN, tick);
-            delay(500);
-        }
+            ;
     }
-    Serial.println("Info: MPU6050 Found! ✅");
+    Serial.println("[INFO] MPU6050 Found! ✅");
 
     _mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
     _mpu.setGyroRange(MPU6050_RANGE_500_DEG);

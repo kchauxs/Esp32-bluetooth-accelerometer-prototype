@@ -14,6 +14,8 @@ String Utils::buildPayload()
     doc["gyro"]["x"] = _ctx->gyro.x;
     doc["gyro"]["y"] = _ctx->gyro.y;
     doc["gyro"]["z"] = _ctx->gyro.z;
+    doc["zoom"] = _ctx->zoom;
+    doc["sendInterval"] = _ctx->sendInterval;
 
     String payload;
     serializeJson(doc, payload);

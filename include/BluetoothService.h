@@ -21,8 +21,8 @@ public:
     BluetoothService(Context *ctx, BluetoothSerial *SerialBT);
     void init(String localName = BLUETOOTH_NAME);
     void send(String message);
+    void sendLoop(String (*callback)());
     String receive();
-
     void receive(void (*callback)(String));
 };
 

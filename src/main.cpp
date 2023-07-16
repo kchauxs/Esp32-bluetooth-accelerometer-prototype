@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
+#include "OneButton.h"
+
 #include "Config.h"
 #include "Context.h"
 
@@ -7,11 +9,14 @@
 #include "Storage.h"
 #include "Utils.h"
 #include "BluetoothService.h"
+#include "RgbLeds.h"
 #include "Callbacks.hpp"
 
 BluetoothSerial SerialBT;
+OneButton *button;
 
 Context ctx;
+RgbLeds rgbLeds;
 Storage storage(&ctx);
 Sensors sensors(&ctx);
 Utils utils(&ctx);
@@ -21,19 +26,25 @@ void setup(void)
 {
   delay(1000);
 
+  // RGB LEDS
+  rgbLeds.initLed();
+  rgbLeds.setColor(CRGB::Black);
+  delay(50);
+  rgbLeds.setColor(CRGB::Purple);
+
 #if SERIAL_DEBUG
   Serial.begin(115200);
   while (!Serial)
     delay(10);
 #endif
 
+  // BUTTONS
+  button = new OneButton(BUTTON_PIN, false);
+  button->attachClick(zoomInCallback);
+  button->attachDoubleClick(zoomOutCallback);
+
   // LED AUX
   pinMode(LED_BUILTIN, OUTPUT);
-
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(50);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(50);
   digitalWrite(LED_BUILTIN, LOW);
 
   // STORAGE
@@ -49,19 +60,12 @@ void setup(void)
   // BLUETOOTH
   bluetoothService.init(ctx.bluetoothName);
   delay(500);
+  rgbLeds.setColor(CRGB::Blue);
 }
 
 void loop()
 {
-  static unsigned long lastRead = 0;
-  // Send data via bluetooth
-  if (millis() - lastRead > ctx.sendInterval)
-  {
-    sensors.readMPU();
-    bluetoothService.send(utils.buildPayload());
-    lastRead = millis();
-  }
-
-  // Receive data via bluetooth
+  button->tick();
+  bluetoothService.sendLoop(sendBluetoothCallback);
   bluetoothService.receive(receiveBluetootCallback);
 }

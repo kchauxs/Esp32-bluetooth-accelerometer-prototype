@@ -16,6 +16,17 @@ void BluetoothService::send(String message)
     _serialBT->println(message);
 }
 
+void BluetoothService::sendLoop(String (*callback)())
+{
+    static unsigned long lastRead = 0;
+    if (millis() - lastRead > ctx.sendInterval)
+    {
+        String message = callback();
+        this->send(message);
+        lastRead = millis();
+    }
+}
+
 String BluetoothService::receive()
 {
     String message = "";

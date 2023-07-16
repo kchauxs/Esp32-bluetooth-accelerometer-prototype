@@ -22,12 +22,8 @@ public:
         float z;
     } gyro;
 
+    unsigned int zoom = DEFAULT_ZOOM;
     unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
-
-    bool wifiIsSaved = false;
-    String WiFiSSID;
-    String WiFiPass;
-
     String bluetoothName = BLUETOOTH_NAME;
 
     Context(){};

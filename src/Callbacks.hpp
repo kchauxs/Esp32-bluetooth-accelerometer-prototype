@@ -1,6 +1,19 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+// --------------------------------------------------------------------------------------------
+// Bluetooth Callbacks
+// --------------------------------------------------------------------------------------------
+
+String sendBluetoothCallback()
+{
+    sensors.readMPU();
+    String payload = utils.buildPayload();
+    Serial.print("[INFO] Sending payload: ");
+    Serial.println(payload);
+    return payload;
+}
+
 bool checkSendInterval(unsigned long sendInterval)
 {
     if (sendInterval <= MIN_SEND_INTERVAL || sendInterval >= MAX_SEND_INTERVAL)
@@ -10,7 +23,7 @@ bool checkSendInterval(unsigned long sendInterval)
         return false;
 
     ctx.sendInterval = sendInterval;
-    Serial.print("Setting sendInterval to: ");
+    Serial.print("[INFO] Setting sendInterval to: ");
     Serial.println(sendInterval);
 
     return true;
@@ -27,7 +40,7 @@ bool checkBluetoothName(String bluetoothName)
         return false;
 
     ctx.bluetoothName = bluetoothName;
-    Serial.print("Setting bluetoothName to: ");
+    Serial.print("[INFO] Setting bluetoothName to: ");
     Serial.println(bluetoothName);
 
     return true;
@@ -46,7 +59,7 @@ void receiveBluetootCallback(String message)
     delay(60);
 
 #if SERIAL_DEBUG
-    Serial.println("Message received: ");
+    Serial.println("[INFO] Message received: ");
     serializeJsonPretty(doc, Serial);
     Serial.println();
 #endif
@@ -66,4 +79,28 @@ void receiveBluetootCallback(String message)
 
     doc.clear();
     digitalWrite(LED_BUILTIN, LOW);
+}
+
+//---------------------------------------------------------------------------------------------
+// Button Callbacks
+// --------------------------------------------------------------------------------------------
+
+void zoomInCallback()
+{
+    ctx.zoom = ctx.zoom + 1;
+    if (ctx.zoom > MAX_ZOOM)
+        ctx.zoom = MAX_ZOOM;
+
+    Serial.print("[INFO] Setting zoom in to: ");
+    Serial.println(ctx.zoom);
+}
+
+void zoomOutCallback()
+{
+    ctx.zoom = ctx.zoom - 1;
+    if (ctx.zoom < MIN_ZOOM)
+        ctx.zoom = MIN_ZOOM;
+
+    Serial.print("[INFO] Setting zoom out to: ");
+    Serial.println(ctx.zoom);
 }
