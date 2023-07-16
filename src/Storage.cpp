@@ -18,6 +18,9 @@ void Storage::reset()
 {
     _ctx->bluetoothName = BLUETOOTH_NAME;
     _ctx->sendInterval = DEFAULT_SEND_INTERVAL;
+    _ctx->isBluetoothMode = DEFAULT_BLUETOOTH_MODE;
+    _ctx->wifi.ssid = "";
+    _ctx->wifi.pass = "";
 }
 
 bool Storage::read()
@@ -37,6 +40,9 @@ bool Storage::read()
     {
         _ctx->bluetoothName = jsonConfig["bluetoothName"].as<String>();
         _ctx->sendInterval = jsonConfig["sendInterval"].as<long>();
+        _ctx->isBluetoothMode = jsonConfig["isBluetoothMode"].as<bool>();
+        _ctx->wifi.ssid = jsonConfig["wifi"]["ssid"].as<String>();
+        _ctx->wifi.pass = jsonConfig["wifi"]["pass"].as<String>();
 
 #if SERIAL_DEBUG
         serializeJsonPretty(jsonConfig, Serial);
@@ -56,7 +62,9 @@ bool Storage::save()
     {
         jsonConfig["bluetoothName"] = _ctx->bluetoothName;
         jsonConfig["sendInterval"] = _ctx->sendInterval;
-
+        jsonConfig["isBluetoothMode"] = _ctx->isBluetoothMode;
+        jsonConfig["wifi"]["ssid"] = _ctx->wifi.ssid;
+        jsonConfig["wifi"]["pass"] = _ctx->wifi.pass;
         serializeJsonPretty(jsonConfig, file);
 
 #if SERIAL_DEBUG

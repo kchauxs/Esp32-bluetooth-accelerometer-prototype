@@ -38,34 +38,57 @@ void setup(void)
     delay(10);
 #endif
 
-  // BUTTONS
-  button = new OneButton(BUTTON_PIN, false);
-  button->attachClick(zoomInCallback);
-  button->attachDoubleClick(zoomOutCallback);
-
   // LED AUX
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
 
   // STORAGE
   storage.init();
-
   if (!storage.read())
     storage.save();
+
+  // MODE
+  if (digitalRead(BUTTON_PIN) == HIGH)
+  {
+    ctx.isBluetoothMode = !ctx.isBluetoothMode;
+    storage.save();
+  }
+
+  // BUTTONS
+  button = new OneButton(BUTTON_PIN, false);
+  button->attachClick(zoomInCallback);
+  button->attachDoubleClick(zoomOutCallback);
 
   // SENSORS
   sensors.initMPU();
   delay(500);
 
   // BLUETOOTH
-  bluetoothService.init(ctx.bluetoothName);
-  delay(500);
-  rgbLeds.setColor(CRGB::Blue);
+  if (ctx.isBluetoothMode)
+  {
+    rgbLeds.setColor(CRGB::Black);
+    rgbLeds.setColor(CRGB::Blue);
+    bluetoothService.init(ctx.bluetoothName);
+  }
+  else
+  {
+    rgbLeds.setColor(CRGB::Black);
+    rgbLeds.setColor(CRGB::Green);
+    utils.connecToWifi();
+  }
 }
 
 void loop()
 {
   button->tick();
-  bluetoothService.sendLoop(sendBluetoothCallback);
-  bluetoothService.receive(receiveBluetootCallback);
+
+  if (ctx.isBluetoothMode)
+  {
+    bluetoothService.sendLoop(sendBluetoothCallback);
+    bluetoothService.receive(receiveBluetootCallback);
+  }
+  else
+  {
+    // TODO: Send to server by MQTT
+  }
 }

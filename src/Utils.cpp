@@ -15,10 +15,41 @@ String Utils::buildPayload()
     doc["gyro"]["y"] = _ctx->gyro.y;
     doc["gyro"]["z"] = _ctx->gyro.z;
     doc["zoom"] = _ctx->zoom;
+    doc["wifi"]["ssid"] = _ctx->wifi.ssid;
     doc["sendInterval"] = _ctx->sendInterval;
 
     String payload;
     serializeJson(doc, payload);
     doc.clear();
     return payload;
+}
+
+bool Utils::isConnectedToWifi()
+{
+    return WiFi.status() == WL_CONNECTED;
+}
+
+bool Utils::connecToWifi()
+{
+    String SSID = _ctx->wifi.ssid;
+    String PASS = _ctx->wifi.pass;
+
+    if (SSID == "" || PASS == "")
+        return false;
+
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID.c_str(), PASS.c_str());
+
+    byte attempt = 0;
+    bool tick = false;
+
+    while (WiFi.status() != WL_CONNECTED && attempt < 80)
+    {
+        attempt++;
+        tick = !tick;
+        digitalWrite(LED_BUILTIN, tick);
+        delay(250);
+    }
+    digitalWrite(LED_BUILTIN, LOW);
+    return isConnectedToWifi();
 }

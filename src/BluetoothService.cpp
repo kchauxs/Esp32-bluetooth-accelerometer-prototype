@@ -21,9 +21,12 @@ void BluetoothService::sendLoop(String (*callback)())
     static unsigned long lastRead = 0;
     if (millis() - lastRead > ctx.sendInterval)
     {
+        lastRead = millis();
+        if (!_serialBT->hasClient())
+            return;
+
         String message = callback();
         this->send(message);
-        lastRead = millis();
     }
 }
 

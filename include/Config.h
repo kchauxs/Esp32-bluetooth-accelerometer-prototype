@@ -21,7 +21,9 @@
 #define DEFAULT_ZOOM 1
 #define MIN_ZOOM 1
 #define MAX_ZOOM 10
+
 // BLUETOOTH CONFIG
+#define DEFAULT_BLUETOOTH_MODE true
 #define BLUETOOTH_NAME "Acelorometer-device"
 
 #endif // __CONFIG_H__

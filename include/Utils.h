@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <WiFi.h>
 
 #include "Config.h"
 #include "Context.h"
@@ -15,6 +16,8 @@ private:
 public:
     Utils(Context *ctx);
     String buildPayload();
+    bool connecToWifi();
+    bool isConnectedToWifi();
 };
 
 extern Utils utils;
