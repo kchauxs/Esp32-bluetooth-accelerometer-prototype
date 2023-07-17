@@ -26,4 +26,9 @@
 #define DEFAULT_BLUETOOTH_MODE true
 #define BLUETOOTH_NAME "Acelorometer-device"
 
+// MQTT CONFIG
+#define DEFAULT_MQTT_SERVER "broker.emqx.io"
+#define DEFAULT_MQTT_PORT 1883
+#define DEFAULT_MQTT_PUBLISH_TOPIC "accelerometer-output/ae49f0de-73a9-4db5-a3d5-e48bd3225791"
+
 #endif // __CONFIG_H__

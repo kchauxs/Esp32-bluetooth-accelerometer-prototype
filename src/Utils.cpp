@@ -7,7 +7,7 @@ Utils::Utils(Context *ctx)
 
 String Utils::buildPayload()
 {
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<1024> doc;
     doc["acceleration"]["x"] = _ctx->acceleration.x;
     doc["acceleration"]["y"] = _ctx->acceleration.y;
     doc["acceleration"]["z"] = _ctx->acceleration.z;
@@ -16,6 +16,9 @@ String Utils::buildPayload()
     doc["gyro"]["z"] = _ctx->gyro.z;
     doc["zoom"] = _ctx->zoom;
     doc["wifi"]["ssid"] = _ctx->wifi.ssid;
+    doc["mqtt"]["server"] = _ctx->mqtt.server;
+    doc["mqtt"]["port"] = _ctx->mqtt.port;
+    doc["mqtt"]["publishTopic"] = _ctx->mqtt.publishTopic;
     doc["sendInterval"] = _ctx->sendInterval;
 
     String payload;
@@ -52,4 +55,10 @@ bool Utils::connecToWifi()
     }
     digitalWrite(LED_BUILTIN, LOW);
     return isConnectedToWifi();
+}
+
+void Utils::interruptExecution()
+{
+    while (true)
+        ;
 }

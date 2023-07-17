@@ -28,10 +28,19 @@ public:
         String pass;
     } wifi;
 
+    struct
+    {
+        String server = DEFAULT_MQTT_SERVER;
+        int port = DEFAULT_MQTT_PORT;
+        String user;
+        String pass;
+        String publishTopic = DEFAULT_MQTT_PUBLISH_TOPIC;
+
+    } mqtt;
+
     bool isBluetoothMode = DEFAULT_BLUETOOTH_MODE;
     String bluetoothName = BLUETOOTH_NAME;
 
-    
     unsigned int zoom = DEFAULT_ZOOM;
     unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
 

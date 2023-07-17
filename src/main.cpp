@@ -29,7 +29,6 @@ void setup(void)
   // RGB LEDS
   rgbLeds.initLed();
   rgbLeds.setColor(CRGB::Black);
-  delay(50);
   rgbLeds.setColor(CRGB::Purple);
 
 #if SERIAL_DEBUG
@@ -60,8 +59,11 @@ void setup(void)
   button->attachDoubleClick(zoomOutCallback);
 
   // SENSORS
-  sensors.initMPU();
-  delay(500);
+  if (!sensors.initMPU())
+  {
+    rgbLeds.setColor(CRGB::Red);
+    utils.interruptExecution();
+  }
 
   // BLUETOOTH
   if (ctx.isBluetoothMode)

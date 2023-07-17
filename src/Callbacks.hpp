@@ -9,8 +9,11 @@ String sendBluetoothCallback()
 {
     sensors.readMPU();
     String payload = utils.buildPayload();
-    Serial.print("[INFO] Sending payload: ");
+
+#if SERIAL_DEBUG
+    Serial.print("\n[INFO] Sending payload: ");
     Serial.println(payload);
+#endif
     return payload;
 }
 
@@ -23,9 +26,10 @@ bool checkSendInterval(unsigned long sendInterval)
         return false;
 
     ctx.sendInterval = sendInterval;
+#if SERIAL_DEBUG
     Serial.print("[INFO] Setting sendInterval to: ");
     Serial.println(sendInterval);
-
+#endif
     return true;
 }
 
@@ -40,15 +44,16 @@ bool checkBluetoothName(String bluetoothName)
         return false;
 
     ctx.bluetoothName = bluetoothName;
+#if SERIAL_DEBUG
     Serial.print("[INFO] Setting bluetoothName to: ");
     Serial.println(bluetoothName);
-
+#endif
     return true;
 }
 
 void receiveBluetootCallback(String message)
 {
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<1024> doc;
     if (deserializeJson(doc, message))
     {
         Serial.println("Error: Failed to parse JSON");
@@ -76,6 +81,7 @@ void receiveBluetootCallback(String message)
         if (checkBluetoothName(bluetoothName))
             storage.save();
     }
+
     else if (doc.containsKey("wifi"))
     {
         JsonObject wifi = doc["wifi"];
@@ -84,7 +90,7 @@ void receiveBluetootCallback(String message)
         {
             String ssid = wifi["ssid"];
             String pass = wifi["pass"];
-            
+
             if (ssid != "" && pass != "")
             {
                 ctx.wifi.ssid = ssid;
@@ -93,6 +99,27 @@ void receiveBluetootCallback(String message)
             }
         }
     }
+
+    else if (doc.containsKey("mqtt"))
+    {
+        JsonObject mqtt = doc["mqtt"];
+
+        if (mqtt.containsKey("server") && mqtt.containsKey("port") && mqtt.containsKey("publishTopic"))
+        {
+            String server = mqtt["server"];
+            int port = mqtt["port"];
+            String publishTopic = mqtt["publishTopic"];
+
+            if (server != "" && port != 0 && publishTopic != "")
+            {
+                ctx.mqtt.server = server;
+                ctx.mqtt.port = port;
+                ctx.mqtt.publishTopic = publishTopic;
+                storage.save();
+            }
+        }
+    }
+
     else if (doc.containsKey("zoom"))
     {
         int zoom = doc["zoom"];

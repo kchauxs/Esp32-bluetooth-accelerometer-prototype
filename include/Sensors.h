@@ -18,7 +18,7 @@ private:
 
 public:
     Sensors(Context *ctx);
-    void initMPU();
+    bool initMPU();
     void readMPU();
 };
 
