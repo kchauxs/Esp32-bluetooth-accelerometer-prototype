@@ -5,15 +5,10 @@
 // Bluetooth Callbacks
 // --------------------------------------------------------------------------------------------
 
-String sendBluetoothCallback()
+String payloadCallback()
 {
-    sensors.readMPU();
+    // sensors.readMPU();
     String payload = utils.buildPayload();
-
-#if SERIAL_DEBUG
-    Serial.print("\n[INFO] Sending payload: ");
-    Serial.println(payload);
-#endif
     return payload;
 }
 

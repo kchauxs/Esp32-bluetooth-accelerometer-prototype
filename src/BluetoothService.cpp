@@ -26,6 +26,11 @@ void BluetoothService::sendLoop(String (*callback)())
             return;
 
         String message = callback();
+#if SERIAL_DEBUG
+        Serial.print("\n[INFO] Send message: ");
+        Serial.println(message);
+#endif
+
         this->send(message);
     }
 }

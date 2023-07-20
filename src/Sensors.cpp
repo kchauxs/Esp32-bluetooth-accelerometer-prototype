@@ -33,3 +33,14 @@ void Sensors::readMPU()
     _ctx->gyro.y = g.gyro.y;
     _ctx->gyro.z = g.gyro.z;
 }
+
+void Sensors::loop()
+{
+    static unsigned long lastSensorRead = 0;
+
+    if (millis() - lastSensorRead > 50000)
+    {
+        lastSensorRead = millis();
+        this->readMPU();
+    }
+}

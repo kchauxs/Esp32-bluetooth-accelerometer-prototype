@@ -15,7 +15,7 @@
 
 // DATA CONFIG
 #define DEFAULT_SEND_INTERVAL 3000
-#define MIN_SEND_INTERVAL 500   // 100 Milliseconds
+#define MIN_SEND_INTERVAL 550   // 100 Milliseconds
 #define MAX_SEND_INTERVAL 60000 // 60 Seconds
 
 #define DEFAULT_ZOOM 1
@@ -30,5 +30,6 @@
 #define DEFAULT_MQTT_SERVER "broker.emqx.io"
 #define DEFAULT_MQTT_PORT 1883
 #define DEFAULT_MQTT_PUBLISH_TOPIC "accelerometer-output/ae49f0de-73a9-4db5-a3d5-e48bd3225791"
-
+#define RECONNECT_ATTEMPT 5000
+#define DEFAULT_MQTT_BUFFER_SIZE 2048
 #endif // __CONFIG_H__

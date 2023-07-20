@@ -1,30 +1,40 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
+#include <WiFi.h>
+#include <Wire.h>
 #include "OneButton.h"
 
 #include "Config.h"
 #include "Context.h"
 
-#include "Sensors.h"
-#include "Storage.h"
-#include "Utils.h"
 #include "BluetoothService.h"
 #include "RgbLeds.h"
+#include "Sensors.h"
+#include "Service.h"
+#include "Storage.h"
+#include "Utils.h"
+
 #include "Callbacks.hpp"
 
 BluetoothSerial SerialBT;
 OneButton *button;
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
 
 Context ctx;
 RgbLeds rgbLeds;
-Storage storage(&ctx);
 Sensors sensors(&ctx);
+Service service(&ctx);
+Storage storage(&ctx);
 Utils utils(&ctx);
-BluetoothService bluetoothService(&ctx, &SerialBT);
+// BluetoothService bluetoothService(&ctx, &SerialBT);
+
+BluetoothService *bluetoothService;
 
 void setup(void)
 {
   delay(1000);
+  Wire.begin();
 
   // RGB LEDS
   rgbLeds.initLed();
@@ -40,6 +50,14 @@ void setup(void)
   // LED AUX
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+
+  // SENSORS
+  if (!sensors.initMPU())
+  {
+    rgbLeds.setColor(CRGB::Black);
+    rgbLeds.setColor(CRGB::Red);
+    utils.interruptExecution();
+  }
 
   // STORAGE
   storage.init();
@@ -58,39 +76,41 @@ void setup(void)
   button->attachClick(zoomInCallback);
   button->attachDoubleClick(zoomOutCallback);
 
-  // SENSORS
-  if (!sensors.initMPU())
-  {
-    rgbLeds.setColor(CRGB::Red);
-    utils.interruptExecution();
-  }
-
   // BLUETOOTH
   if (ctx.isBluetoothMode)
   {
     rgbLeds.setColor(CRGB::Black);
     rgbLeds.setColor(CRGB::Blue);
-    bluetoothService.init(ctx.bluetoothName);
+
+    bluetoothService = new BluetoothService(&ctx, &SerialBT);
+    bluetoothService->init(ctx.bluetoothName);
   }
   else
   {
     rgbLeds.setColor(CRGB::Black);
     rgbLeds.setColor(CRGB::Green);
+
+    // WIFI
     utils.connecToWifi();
+    delay(1000);
+
+    // MQTT SERVICE
+    service.setupMqttServer(&mqttClient, DEFAULT_MQTT_BUFFER_SIZE);
   }
 }
 
 void loop()
 {
   button->tick();
+  sensors.loop();
 
-  if (ctx.isBluetoothMode)
+  if (!ctx.isBluetoothMode)
   {
-    bluetoothService.sendLoop(sendBluetoothCallback);
-    bluetoothService.receive(receiveBluetootCallback);
+    service.mqttLoop(payloadCallback);
   }
   else
   {
-    // TODO: Send to server by MQTT
+    bluetoothService->sendLoop(payloadCallback);
+    bluetoothService->receive(receiveBluetootCallback);
   }
 }
