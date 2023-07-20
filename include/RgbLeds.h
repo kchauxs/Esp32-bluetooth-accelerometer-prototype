@@ -11,11 +11,12 @@ class RgbLeds
 {
 private:
     CRGB leds[NUM_LEDS];
-
+    Context *_ctx;
 public:
-    RgbLeds(){};
+    RgbLeds(Context *ctx);
     void setColor(CRGB color);
     void initLed();
+    void loop(bool hasClient);
 };
 
 extern RgbLeds rgbLeds;

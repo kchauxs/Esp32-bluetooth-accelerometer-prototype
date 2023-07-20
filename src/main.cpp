@@ -10,26 +10,21 @@
 #include "BluetoothService.h"
 #include "RgbLeds.h"
 #include "Sensors.h"
-#include "Service.h"
 #include "Storage.h"
 #include "Utils.h"
 
 #include "Callbacks.hpp"
 
 BluetoothSerial SerialBT;
-OneButton *button;
+OneButton button(BUTTON_PIN, false);
 WiFiClient wifiClient;
-PubSubClient mqttClient(wifiClient);
 
 Context ctx;
-RgbLeds rgbLeds;
+RgbLeds rgbLeds(&ctx);
 Sensors sensors(&ctx);
-Service service(&ctx);
 Storage storage(&ctx);
 Utils utils(&ctx);
-// BluetoothService bluetoothService(&ctx, &SerialBT);
-
-BluetoothService *bluetoothService;
+BluetoothService bluetoothService(&ctx, &SerialBT);
 
 void setup(void)
 {
@@ -39,7 +34,7 @@ void setup(void)
   // RGB LEDS
   rgbLeds.initLed();
   rgbLeds.setColor(CRGB::Black);
-  rgbLeds.setColor(CRGB::Purple);
+  rgbLeds.setColor(CRGB::Blue);
 
 #if SERIAL_DEBUG
   Serial.begin(115200);
@@ -56,6 +51,7 @@ void setup(void)
   {
     rgbLeds.setColor(CRGB::Black);
     rgbLeds.setColor(CRGB::Red);
+    digitalWrite(LED_BUILTIN, HIGH);
     utils.interruptExecution();
   }
 
@@ -64,53 +60,22 @@ void setup(void)
   if (!storage.read())
     storage.save();
 
-  // MODE
-  if (digitalRead(BUTTON_PIN) == HIGH)
-  {
-    ctx.isBluetoothMode = !ctx.isBluetoothMode;
-    storage.save();
-  }
-
   // BUTTONS
-  button = new OneButton(BUTTON_PIN, false);
-  button->attachClick(zoomInCallback);
-  button->attachDoubleClick(zoomOutCallback);
+  button.attachClick(zoomInCallback);
+  button.attachDoubleClick(zoomOutCallback);
 
   // BLUETOOTH
-  if (ctx.isBluetoothMode)
-  {
-    rgbLeds.setColor(CRGB::Black);
-    rgbLeds.setColor(CRGB::Blue);
-
-    bluetoothService = new BluetoothService(&ctx, &SerialBT);
-    bluetoothService->init(ctx.bluetoothName);
-  }
-  else
-  {
-    rgbLeds.setColor(CRGB::Black);
-    rgbLeds.setColor(CRGB::Green);
-
-    // WIFI
-    utils.connecToWifi();
-    delay(1000);
-
-    // MQTT SERVICE
-    service.setupMqttServer(&mqttClient, DEFAULT_MQTT_BUFFER_SIZE);
-  }
+  bluetoothService.init(ctx.bluetoothName);
 }
 
 void loop()
 {
-  button->tick();
-  sensors.loop();
+  bool hasClient = bluetoothService.hasClient();
+  rgbLeds.loop(hasClient);
+  if (!hasClient)
+    return;
 
-  if (!ctx.isBluetoothMode)
-  {
-    service.mqttLoop(payloadCallback);
-  }
-  else
-  {
-    bluetoothService->sendLoop(payloadCallback);
-    bluetoothService->receive(receiveBluetootCallback);
-  }
+  button.tick();
+  bluetoothService.sendLoop(payloadCallback);
+  bluetoothService.receive(receiveBluetootCallback);
 }

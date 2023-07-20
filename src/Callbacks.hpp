@@ -7,7 +7,7 @@
 
 String payloadCallback()
 {
-    // sensors.readMPU();
+    sensors.readMPU();
     String payload = utils.buildPayload();
     return payload;
 }
@@ -77,44 +77,6 @@ void receiveBluetootCallback(String message)
             storage.save();
     }
 
-    else if (doc.containsKey("wifi"))
-    {
-        JsonObject wifi = doc["wifi"];
-
-        if (wifi.containsKey("ssid") && wifi.containsKey("pass"))
-        {
-            String ssid = wifi["ssid"];
-            String pass = wifi["pass"];
-
-            if (ssid != "" && pass != "")
-            {
-                ctx.wifi.ssid = ssid;
-                ctx.wifi.pass = pass;
-                storage.save();
-            }
-        }
-    }
-
-    else if (doc.containsKey("mqtt"))
-    {
-        JsonObject mqtt = doc["mqtt"];
-
-        if (mqtt.containsKey("server") && mqtt.containsKey("port") && mqtt.containsKey("publishTopic"))
-        {
-            String server = mqtt["server"];
-            int port = mqtt["port"];
-            String publishTopic = mqtt["publishTopic"];
-
-            if (server != "" && port != 0 && publishTopic != "")
-            {
-                ctx.mqtt.server = server;
-                ctx.mqtt.port = port;
-                ctx.mqtt.publishTopic = publishTopic;
-                storage.save();
-            }
-        }
-    }
-
     else if (doc.containsKey("zoom"))
     {
         int zoom = doc["zoom"];
@@ -133,31 +95,16 @@ void receiveBluetootCallback(String message)
             ESP.restart();
         }
     }
+
     else if (doc.containsKey("reset"))
     {
         if (doc["reset"] == true)
         {
             storage.reset();
+            storage.save();
             Serial.println("[INFO] Resetting device");
         }
     }
-
-    // else if (doc.containsKey("factoryReset"))
-    // {
-    //     if (doc["factoryReset"] == true)
-    //     {
-    //         storage.factoryReset();
-    //         Serial.println("[INFO] Factory resetting device");
-    //     }
-    // }
-    // else if (doc.containsKey("calibrate"))
-    // {
-    //     if (doc["calibrate"] == true)
-    //     {
-    //         sensors.calibrate();
-    //         Serial.println("[INFO] Calibrating device");
-    //     }
-    // }
 
     doc.clear();
     digitalWrite(LED_BUILTIN, LOW);

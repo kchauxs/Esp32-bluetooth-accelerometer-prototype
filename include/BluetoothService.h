@@ -24,6 +24,7 @@ public:
     void sendLoop(String (*callback)());
     String receive();
     void receive(void (*callback)(String));
+    bool hasClient();
 };
 
 #endif // __BLUETOOTHSERVICE_H__

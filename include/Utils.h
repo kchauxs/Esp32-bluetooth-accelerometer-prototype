@@ -16,9 +16,7 @@ private:
 public:
     Utils(Context *ctx);
     String buildPayload();
-    bool connecToWifi();
     void interruptExecution();
-    bool isConnectedToWifi();
 };
 
 extern Utils utils;

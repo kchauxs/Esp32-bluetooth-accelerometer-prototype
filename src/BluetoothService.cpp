@@ -22,16 +22,13 @@ void BluetoothService::sendLoop(String (*callback)())
     if (millis() - lastRead > ctx.sendInterval)
     {
         lastRead = millis();
-        if (!_serialBT->hasClient())
-            return;
-
         String message = callback();
+        this->send(message);
+        
 #if SERIAL_DEBUG
         Serial.print("\n[INFO] Send message: ");
         Serial.println(message);
 #endif
-
-        this->send(message);
     }
 }
 
@@ -62,4 +59,9 @@ void BluetoothService::receive(void (*callback)(String))
         if (message != "")
             callback(message);
     }
+}
+
+bool BluetoothService::hasClient()
+{
+    return _serialBT->hasClient();
 }
