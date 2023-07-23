@@ -20,7 +20,16 @@ public:
     Sensors(Context *ctx);
     bool initMPU();
     void readMPU();
+
+    void readGyro();
+    void readAccel();
+    void readTemp();
+
     void loop();
+
+    float gyroXerror = 0.07;
+    float gyroYerror = 0.03;
+    float gyroZerror = 0.01;
 };
 
 extern Sensors sensors;

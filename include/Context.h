@@ -22,6 +22,8 @@ public:
         float z;
     } gyro;
 
+    float mpuTemp = 0;
+
     String bluetoothName = BLUETOOTH_NAME;
 
     unsigned int zoom = DEFAULT_ZOOM;

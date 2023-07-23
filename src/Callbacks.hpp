@@ -7,7 +7,7 @@
 
 String payloadCallback()
 {
-    sensors.readMPU();
+    // sensors.readMPU();
     String payload = utils.buildPayload();
     return payload;
 }
@@ -22,7 +22,7 @@ bool checkSendInterval(unsigned long sendInterval)
 
     ctx.sendInterval = sendInterval;
 #if SERIAL_DEBUG
-    Serial.print("[INFO] Setting sendInterval to: ");
+    Serial.print("[INFO]\tSetting sendInterval to: ");
     Serial.println(sendInterval);
 #endif
     return true;
@@ -40,7 +40,7 @@ bool checkBluetoothName(String bluetoothName)
 
     ctx.bluetoothName = bluetoothName;
 #if SERIAL_DEBUG
-    Serial.print("[INFO] Setting bluetoothName to: ");
+    Serial.print("[INFO]\tSetting bluetoothName to: ");
     Serial.println(bluetoothName);
 #endif
     return true;
@@ -59,7 +59,7 @@ void receiveBluetootCallback(String message)
     delay(60);
 
 #if SERIAL_DEBUG
-    Serial.println("[INFO] Message received: ");
+    Serial.println("[INFO]\tMessage received: ");
     serializeJsonPretty(doc, Serial);
     Serial.println();
 #endif
@@ -83,7 +83,7 @@ void receiveBluetootCallback(String message)
         if (zoom != ctx.zoom)
         {
             ctx.zoom = zoom;
-            Serial.print("[INFO] Setting zoom to: ");
+            Serial.print("[INFO]\tSetting zoom to: ");
             Serial.println(zoom);
         }
     }
@@ -91,7 +91,7 @@ void receiveBluetootCallback(String message)
     {
         if (doc["reboot"] == true)
         {
-            Serial.println("[INFO] Rebooting device");
+            Serial.println("[INFO]\tRebooting device");
             ESP.restart();
         }
     }
@@ -102,7 +102,7 @@ void receiveBluetootCallback(String message)
         {
             storage.reset();
             storage.save();
-            Serial.println("[INFO] Resetting device");
+            Serial.println("[INFO]\tResetting device");
         }
     }
 
@@ -120,7 +120,7 @@ void zoomInCallback()
     if (ctx.zoom > MAX_ZOOM)
         ctx.zoom = MAX_ZOOM;
 
-    Serial.print("[INFO] Setting zoom in to: ");
+    Serial.print("[INFO]\tSetting zoom in to: ");
     Serial.println(ctx.zoom);
 }
 
@@ -130,6 +130,6 @@ void zoomOutCallback()
     if (ctx.zoom < MIN_ZOOM)
         ctx.zoom = MIN_ZOOM;
 
-    Serial.print("[INFO] Setting zoom out to: ");
+    Serial.print("[INFO]\tSetting zoom out to: ");
     Serial.println(ctx.zoom);
 }

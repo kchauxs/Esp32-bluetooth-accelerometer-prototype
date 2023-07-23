@@ -71,11 +71,13 @@ void setup(void)
 void loop()
 {
   bool hasClient = bluetoothService.hasClient();
-  rgbLeds.loop(hasClient);
+  rgbLeds.setColor(hasClient ? CRGB::Green : CRGB::Blue);
+  
   if (!hasClient)
     return;
 
   button.tick();
+  sensors.loop();
   bluetoothService.sendLoop(payloadCallback);
   bluetoothService.receive(receiveBluetootCallback);
 }

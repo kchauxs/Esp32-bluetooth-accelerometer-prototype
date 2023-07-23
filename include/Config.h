@@ -14,8 +14,8 @@
 #define LED_BRIDHTNESS 128
 
 // DATA CONFIG
-#define DEFAULT_SEND_INTERVAL 3000
-#define MIN_SEND_INTERVAL 550   // 100 Milliseconds
+#define DEFAULT_SEND_INTERVAL 1000
+#define MIN_SEND_INTERVAL 250   // 100 Milliseconds
 #define MAX_SEND_INTERVAL 60000 // 60 Seconds
 
 #define DEFAULT_ZOOM 1
