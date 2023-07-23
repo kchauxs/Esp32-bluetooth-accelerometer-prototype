@@ -24,11 +24,10 @@ PubSubClient mqttClient(wifiClient);
 Context ctx;
 RgbLeds rgbLeds;
 Sensors sensors(&ctx);
-Service service(&ctx);
 Storage storage(&ctx);
 Utils utils(&ctx);
-// BluetoothService bluetoothService(&ctx, &SerialBT);
 
+Service *service;
 BluetoothService *bluetoothService;
 
 void setup(void)
@@ -84,6 +83,7 @@ void setup(void)
 
     bluetoothService = new BluetoothService(&ctx, &SerialBT);
     bluetoothService->init(ctx.bluetoothName);
+    delay(1000);
   }
   else
   {
@@ -95,21 +95,23 @@ void setup(void)
     delay(1000);
 
     // MQTT SERVICE
-    service.setupMqttServer(&mqttClient, DEFAULT_MQTT_BUFFER_SIZE);
+    service = new Service(&ctx);
+    service->setupMqttServer(&mqttClient, DEFAULT_MQTT_BUFFER_SIZE);
+    delay(1000);
   }
 }
 
 void loop()
 {
   button->tick();
-  sensors.loop();
 
   if (!ctx.isBluetoothMode)
-  {
-    service.mqttLoop(payloadCallback);
-  }
+    service->mqttLoop(payloadCallback);
   else
   {
+    if (!bluetoothService->hasClient())
+      return;
+
     bluetoothService->sendLoop(payloadCallback);
     bluetoothService->receive(receiveBluetootCallback);
   }

@@ -24,8 +24,8 @@ public:
 
     struct
     {
-        String ssid;
-        String pass;
+        String ssid = DEFAULT_WIFI_SSID;
+        String pass = DEFAULT_WIFI_PASS;
     } wifi;
 
     struct

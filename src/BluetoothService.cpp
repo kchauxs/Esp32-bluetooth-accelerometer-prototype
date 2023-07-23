@@ -63,3 +63,8 @@ void BluetoothService::receive(void (*callback)(String))
             callback(message);
     }
 }
+
+bool BluetoothService::hasClient()
+{
+    return _serialBT->hasClient();
+}

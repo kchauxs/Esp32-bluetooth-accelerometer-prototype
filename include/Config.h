@@ -5,11 +5,11 @@
 
 // DEVICE CONFIG
 #define SERIAL_DEBUG true
-#define BUTTON_PIN D8
+#define BUTTON_PIN A13
 
 // RGB LEDS
 #define NUM_LEDS 1
-#define LED_DATA_PIN 23
+#define LED_DATA_PIN T4
 #define LED_TYPE NEOPIXEL
 #define LED_BRIDHTNESS 128
 
@@ -25,6 +25,10 @@
 // BLUETOOTH CONFIG
 #define DEFAULT_BLUETOOTH_MODE true
 #define BLUETOOTH_NAME "Acelorometer-device"
+
+// WIFI CONFIG
+#define DEFAULT_WIFI_SSID ""
+#define DEFAULT_WIFI_PASS ""
 
 // MQTT CONFIG
 #define DEFAULT_MQTT_SERVER "broker.emqx.io"
