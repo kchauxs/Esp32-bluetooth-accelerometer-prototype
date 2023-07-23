@@ -22,6 +22,8 @@ public:
         float z;
     } gyro;
 
+    float mpuTemp = 0.0;
+
     struct
     {
         String ssid = DEFAULT_WIFI_SSID;

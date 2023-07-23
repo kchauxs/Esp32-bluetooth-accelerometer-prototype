@@ -59,7 +59,6 @@ void setup(void)
   }
 
   // STORAGE
-  storage.init();
   if (!storage.read())
     storage.save();
 
@@ -104,6 +103,7 @@ void setup(void)
 void loop()
 {
   button->tick();
+  sensors.loop();
 
   if (!ctx.isBluetoothMode)
     service->mqttLoop(payloadCallback);

@@ -7,7 +7,7 @@
 
 String payloadCallback()
 {
-    sensors.readMPU();
+    // sensors.readMPU();
     String payload = utils.buildPayload();
     return payload;
 }

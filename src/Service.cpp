@@ -1,6 +1,8 @@
 #include "Service.h"
 
 String mqttServer;
+String mqttPublishTopic;
+int mqttPort;
 
 Service::Service(Context *ctx)
 {
@@ -11,14 +13,16 @@ void Service::setupMqttServer(PubSubClient *client, uint16_t bufferSize)
 {
     _client = client;
     mqttServer = _ctx->mqtt.server;
+    mqttPublishTopic = _ctx->mqtt.publishTopic;
+    mqttPort = _ctx->mqtt.port;
 
 #if SERIAL_DEBUG
     Serial.println("\n[INFO] MQTT Server: " + mqttServer);
-    Serial.println("[INFO] MQTT Port: " + String(_ctx->mqtt.port));
-    Serial.println("[INFO] Publish topic: " + _ctx->mqtt.publishTopic);
+    Serial.println("[INFO] MQTT Port: " + String(mqttPort));
+    Serial.println("[INFO] Publish topic: " + mqttPublishTopic);
 #endif
 
-    _client->setServer(mqttServer.c_str(), _ctx->mqtt.port);
+    _client->setServer(mqttServer.c_str(), mqttPort);
     _client->setBufferSize(bufferSize);
 }
 
@@ -95,7 +99,7 @@ void Service::mqttLoop(String (*callback)())
         {
             lastMsg = millis();
             String payload = callback();
-            this->publishData(ctx.mqtt.publishTopic, payload);
+            this->publishData(mqttPublishTopic, payload);
         }
     }
 }

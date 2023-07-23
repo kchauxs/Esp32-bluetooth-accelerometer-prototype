@@ -11,6 +11,8 @@
         "memory": "cpp",
         "random": "cpp",
         "optional": "cpp",
-        "*.tcc": "cpp"
-    }
+        "*.tcc": "cpp",
+        "fstream": "cpp"
+    },
+    "cmake.configureOnOpen": false
 }

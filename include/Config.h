@@ -27,13 +27,13 @@
 #define BLUETOOTH_NAME "Acelorometer-device"
 
 // WIFI CONFIG
-#define DEFAULT_WIFI_SSID ""
-#define DEFAULT_WIFI_PASS ""
+#define DEFAULT_WIFI_SSID "FLIA_CHAUX"
+#define DEFAULT_WIFI_PASS "Passredux4085A"
 
 // MQTT CONFIG
 #define DEFAULT_MQTT_SERVER "broker.emqx.io"
 #define DEFAULT_MQTT_PORT 1883
 #define DEFAULT_MQTT_PUBLISH_TOPIC "accelerometer-output/ae49f0de-73a9-4db5-a3d5-e48bd3225791"
 #define RECONNECT_ATTEMPT 5000
-#define DEFAULT_MQTT_BUFFER_SIZE 2048
+#define DEFAULT_MQTT_BUFFER_SIZE 4096
 #endif // __CONFIG_H__

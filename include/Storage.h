@@ -2,7 +2,7 @@
 #define __STORAGE_H__
 
 #include <Arduino.h>
-#include <SPIFFS.h>
+#include <Preferences.h>
 #include <ArduinoJson.h>
 
 #include "Context.h"
@@ -10,12 +10,14 @@
 class Storage
 {
 private:
-    bool _isInit = false;
     Context *_ctx;
+    Preferences _preferences;
+
+    String _name = "setting";
 
 public:
     Storage(Context *ctx);
-    bool init();
+    // bool init();
     void reset();
     bool read();
     bool save();
