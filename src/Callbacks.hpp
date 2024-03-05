@@ -62,14 +62,18 @@ void rebootDevice(const JsonObject &doc)
 {
     bool isReboot = doc["value"].as<bool>();
     if (isReboot)
-        ESP.restart();
+        utils.restartDevice();
 }
 
 void resetConfiguration(const JsonObject &doc)
 {
     bool isReset = doc["value"].as<bool>();
     if (isReset)
+    {
         storage.reset();
+        storage.save();
+        utils.restartDevice();
+    }
 }
 
 void adjustZoom(const JsonObject &doc)

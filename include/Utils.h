@@ -17,6 +17,7 @@ public:
     Utils(Context *ctx);
     String buildPayload();
     void interruptExecution();
+    void restartDevice(unsigned int waitTime = 3000);
 };
 
 extern Utils utils;

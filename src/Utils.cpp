@@ -18,7 +18,6 @@ String Utils::buildPayload()
     doc["zoom"] = _ctx->zoom;
     doc["interval"] = _ctx->sendInterval;
     doc["brightness"] = _ctx->brightness;
-    
 
     String payload;
     serializeJson(doc, payload);
@@ -29,4 +28,10 @@ void Utils::interruptExecution()
 {
     while (true)
         ;
+}
+
+void Utils::restartDevice(unsigned int waitTime)
+{
+    delay(waitTime);
+    ESP.restart();
 }
