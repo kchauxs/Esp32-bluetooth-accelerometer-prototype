@@ -19,12 +19,14 @@ BluetoothSerial SerialBT;
 OneButton button(BUTTON_PIN, false);
 WiFiClient wifiClient;
 
-Context ctx;
-RgbLeds rgbLeds(&ctx);
-Sensors sensors(&ctx);
-Storage storage(&ctx);
-Utils utils(&ctx);
-BluetoothService bluetoothService(&ctx, &SerialBT);
+Context *Context::instance = nullptr;
+Context *ctx = Context::getInstance();
+
+RgbLeds rgbLeds(ctx);
+Sensors sensors(ctx);
+Storage storage(ctx);
+Utils utils(ctx);
+BluetoothService bluetoothService(ctx, &SerialBT);
 
 void setup(void)
 {
@@ -66,7 +68,7 @@ void setup(void)
   button.attachDoubleClick(zoomOut);
 
   // BLUETOOTH
-  bluetoothService.init(ctx.bluetoothName);
+  bluetoothService.init();
 }
 
 void loop()

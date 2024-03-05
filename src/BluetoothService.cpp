@@ -6,9 +6,9 @@ BluetoothService::BluetoothService(Context *ctx, BluetoothSerial *SerialBT)
     this->_serialBT = SerialBT;
 }
 
-void BluetoothService::init(String localName)
+void BluetoothService::init()
 {
-    this->_serialBT->begin(localName);
+    this->_serialBT->begin(_ctx->bluetoothName);
 }
 
 void BluetoothService::send(String message)
@@ -19,12 +19,12 @@ void BluetoothService::send(String message)
 void BluetoothService::sendLoop(String (*callback)())
 {
     static unsigned long lastRead = 0;
-    if (millis() - lastRead > ctx.sendInterval)
+    if (millis() - lastRead > _ctx->sendInterval)
     {
         lastRead = millis();
         String message = callback();
         this->send(message);
-        
+
 #if SERIAL_DEBUG
         Serial.print("\n[INFO]\t Send message: ");
         Serial.println(message);

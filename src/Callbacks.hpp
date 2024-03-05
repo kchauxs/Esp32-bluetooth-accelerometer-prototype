@@ -27,10 +27,10 @@ void changeBluetoothName(const JsonObject &doc)
     if (bluetoothName == "")
         return;
 
-    if (bluetoothName == ctx.bluetoothName)
+    if (bluetoothName == ctx->bluetoothName)
         return;
 
-    ctx.bluetoothName = bluetoothName;
+    ctx->bluetoothName = bluetoothName;
     storage.save();
 }
 
@@ -39,8 +39,8 @@ void adjustBrightness(const JsonObject &doc)
     uint8_t brightness = doc["value"].as<uint8_t>();
     if (brightness > 0 && brightness <= 255)
     {
-        ctx.brightness = brightness;
-        FastLED.setBrightness(ctx.brightness);
+        ctx->brightness = brightness;
+        FastLED.setBrightness(ctx->brightness);
         storage.save();
     }
 }
@@ -51,10 +51,10 @@ void adjustSendInterval(const JsonObject &doc)
     if (sendInterval < MIN_SEND_INTERVAL || sendInterval > MAX_SEND_INTERVAL)
         return;
 
-    if (sendInterval == ctx.sendInterval)
+    if (sendInterval == ctx->sendInterval)
         return;
 
-    ctx.sendInterval = sendInterval;
+    ctx->sendInterval = sendInterval;
     storage.save();
 }
 
@@ -79,8 +79,8 @@ void resetConfiguration(const JsonObject &doc)
 void adjustZoom(const JsonObject &doc)
 {
     int value = doc["value"].as<int>();
-    if (value != ctx.zoom && value >= 0 && value <= MAX_ZOOM)
-        ctx.zoom = value;
+    if (value != ctx->zoom && value >= 0 && value <= MAX_ZOOM)
+        ctx->zoom = value;
 }
 
 void handleCommand(const String &command, const JsonObject &doc)
@@ -118,7 +118,7 @@ void receiveBluetootCallback(String message)
         return;
 
 #if SERIAL_DEBUG
-    Serial.println("[INFO]\t Message received: ");
+    Serial.println("\n[INFO]\t Message received: ");
     serializeJsonPretty(doc, Serial);
     Serial.println();
 #endif
@@ -141,24 +141,24 @@ void receiveBluetootCallback(String message)
 
 void zoomIn()
 {
-    ctx.zoom = ctx.zoom + 1;
-    if (ctx.zoom > MAX_ZOOM)
-        ctx.zoom = MAX_ZOOM;
+    ctx->zoom = ctx->zoom + 1;
+    if (ctx->zoom > MAX_ZOOM)
+        ctx->zoom = MAX_ZOOM;
 
 #if SERIAL_DEBUG
     Serial.print("[INFO]\t Setting zoom in to: ");
-    Serial.println(ctx.zoom);
+    Serial.println(ctx->zoom);
 #endif
 }
 
 void zoomOut()
 {
-    ctx.zoom = ctx.zoom - 1;
-    if (ctx.zoom < MIN_ZOOM)
-        ctx.zoom = MIN_ZOOM;
+    ctx->zoom = ctx->zoom - 1;
+    if (ctx->zoom < MIN_ZOOM)
+        ctx->zoom = MIN_ZOOM;
 
 #if SERIAL_DEBUG
     Serial.print("[INFO]\t Setting zoom out to: ");
-    Serial.println(ctx.zoom);
+    Serial.println(ctx->zoom);
 #endif
 }
