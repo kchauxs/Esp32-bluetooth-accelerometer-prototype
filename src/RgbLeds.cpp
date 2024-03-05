@@ -18,26 +18,20 @@ void RgbLeds::setColor(CRGB color)
 void RgbLeds::initLed()
 {
     FastLED.addLeds<LED_TYPE, LED_DATA_PIN>(leds, NUM_LEDS);
-    FastLED.setBrightness(LED_BRIDHTNESS);
+    FastLED.setBrightness(_ctx->brightness);
     FastLED.clear();
+
+    setColor(CRGB::Black);
 }
 
-void RgbLeds::loop(bool hasClient)
+void RgbLeds::setBrightness(uint8_t brightness)
 {
-    static unsigned long lastTime = 0;
-    static bool isOn = false;
+    if (brightness == _ctx->brightness)
+        return;
 
-    if (hasClient)
+    if (brightness > 0 && brightness <= 255)
     {
-        if (millis() - lastTime >= _ctx->sendInterval)
-        {
-            lastTime = millis();
-            isOn = !isOn;
-            setColor(isOn ? CRGB::Green : CRGB::Black);
-        }
-    }
-    else
-    {
-        setColor(CRGB::Blue);
+        _ctx->brightness = brightness;
+        FastLED.setBrightness(_ctx->brightness);
     }
 }

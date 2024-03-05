@@ -28,7 +28,7 @@ public:
 
     unsigned int zoom = DEFAULT_ZOOM;
     unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
-
+    uint8_t brightness = DEFAULT_BRIGHTNESS;
     Context(){};
 };
 

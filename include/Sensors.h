@@ -20,6 +20,7 @@ public:
     Sensors(Context *ctx);
     bool initMPU();
     void readMPU();
+    void readMPULoop();
 
     void readGyro();
     void readAccel();

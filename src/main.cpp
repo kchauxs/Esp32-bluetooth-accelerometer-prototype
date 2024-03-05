@@ -8,7 +8,7 @@
 #include "Context.h"
 
 #include "BluetoothService.h"
-#include "RgbLeds.h"
+// #include "RgbLeds.h"
 #include "Sensors.h"
 #include "Storage.h"
 #include "Utils.h"
@@ -20,7 +20,7 @@ OneButton button(BUTTON_PIN, false);
 WiFiClient wifiClient;
 
 Context ctx;
-RgbLeds rgbLeds(&ctx);
+// RgbLeds rgbLeds(&ctx);
 Sensors sensors(&ctx);
 Storage storage(&ctx);
 Utils utils(&ctx);
@@ -31,16 +31,15 @@ void setup(void)
   delay(1000);
   Wire.begin();
 
-  // RGB LEDS
-  rgbLeds.initLed();
-  rgbLeds.setColor(CRGB::Black);
-  rgbLeds.setColor(CRGB::Blue);
-
 #if SERIAL_DEBUG
   Serial.begin(115200);
   while (!Serial)
     delay(10);
 #endif
+
+  // RGB LEDS
+  // rgbLeds.initLed();
+  // delay(50);
 
   // LED AUX
   pinMode(LED_BUILTIN, OUTPUT);
@@ -49,11 +48,13 @@ void setup(void)
   // SENSORS
   if (!sensors.initMPU())
   {
-    rgbLeds.setColor(CRGB::Black);
-    rgbLeds.setColor(CRGB::Red);
     digitalWrite(LED_BUILTIN, HIGH);
     utils.interruptExecution();
   }
+  delay(100);
+
+  // RGB LEDS
+  // rgbLeds.setColor(CRGB::Blue);
 
   // STORAGE
   storage.init();
@@ -61,8 +62,8 @@ void setup(void)
     storage.save();
 
   // BUTTONS
-  button.attachClick(zoomInCallback);
-  button.attachDoubleClick(zoomOutCallback);
+  button.attachClick(zoomIn);
+  button.attachDoubleClick(zoomOut);
 
   // BLUETOOTH
   bluetoothService.init(ctx.bluetoothName);
@@ -71,8 +72,8 @@ void setup(void)
 void loop()
 {
   bool hasClient = bluetoothService.hasClient();
-  rgbLeds.setColor(hasClient ? CRGB::Green : CRGB::Blue);
-  
+  // rgbLeds.setColor(hasClient ? CRGB::Cyan : CRGB::Blue);
+
   if (!hasClient)
     return;
 

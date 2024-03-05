@@ -5,108 +5,128 @@
 // Bluetooth Callbacks
 // --------------------------------------------------------------------------------------------
 
+const String BLUETOOTH_NAME_KEY = "BLUETOOTH_NAME";
+const String BRIGHTNESS_KEY = "BRIGHTNESS";
+const String INTERVAL_KEY = "INTERVAL";
+const String REBOOT_KEY = "REBOOT";
+const String RESET_KEY = "RESET";
+const String ZOOM_KEY = "ZOOM";
+
 String payloadCallback()
 {
-    // sensors.readMPU();
     String payload = utils.buildPayload();
     return payload;
 }
 
-bool checkSendInterval(unsigned long sendInterval)
+void changeBluetoothName(const JsonObject &doc)
 {
-    if (sendInterval <= MIN_SEND_INTERVAL || sendInterval >= MAX_SEND_INTERVAL)
-        return false;
+    String bluetoothName = doc["value"].as<String>();
 
-    if (sendInterval == ctx.sendInterval)
-        return false;
-
-    ctx.sendInterval = sendInterval;
-#if SERIAL_DEBUG
-    Serial.print("[INFO]\tSetting sendInterval to: ");
-    Serial.println(sendInterval);
-#endif
-    return true;
-}
-
-bool checkBluetoothName(String bluetoothName)
-{
     bluetoothName.trim();
 
     if (bluetoothName == "")
-        return false;
+        return;
 
     if (bluetoothName == ctx.bluetoothName)
-        return false;
+        return;
 
     ctx.bluetoothName = bluetoothName;
-#if SERIAL_DEBUG
-    Serial.print("[INFO]\tSetting bluetoothName to: ");
-    Serial.println(bluetoothName);
-#endif
-    return true;
+    storage.save();
+}
+
+void adjustBrightness(const JsonObject &doc)
+{
+    uint8_t brightness = doc["value"].as<uint8_t>();
+    if (brightness > 0 && brightness <= 255)
+    {
+        ctx.brightness = brightness;
+        // FastLED.setBrightness(ctx.brightness);
+        storage.save();
+    }
+}
+
+void adjustSendInterval(const JsonObject &doc)
+{
+    unsigned long sendInterval = doc["value"].as<unsigned long>();
+    if (sendInterval < MIN_SEND_INTERVAL || sendInterval > MAX_SEND_INTERVAL)
+        return;
+
+    if (sendInterval == ctx.sendInterval)
+        return;
+
+    ctx.sendInterval = sendInterval;
+    storage.save();
+}
+
+void rebootDevice(const JsonObject &doc)
+{
+    bool isReboot = doc["value"].as<bool>();
+    if (isReboot)
+        ESP.restart();
+}
+
+void resetConfiguration(const JsonObject &doc)
+{
+    bool isReset = doc["value"].as<bool>();
+    if (isReset)
+        storage.reset();
+}
+
+void adjustZoom(const JsonObject &doc)
+{
+    int value = doc["value"].as<int>();
+    if (value != ctx.zoom && value >= 0 && value <= MAX_ZOOM)
+        ctx.zoom = value;
+}
+
+void handleCommand(const String &command, const JsonObject &doc)
+{
+    if (command == BLUETOOTH_NAME_KEY)
+    {
+        changeBluetoothName(doc);
+    }
+    else if (command == BRIGHTNESS_KEY)
+    {
+        adjustBrightness(doc);
+    }
+    else if (command == INTERVAL_KEY)
+    {
+        adjustSendInterval(doc);
+    }
+    else if (command == REBOOT_KEY)
+    {
+        rebootDevice(doc);
+    }
+    else if (command == RESET_KEY)
+    {
+        resetConfiguration(doc);
+    }
+    else if (command == ZOOM_KEY)
+    {
+        adjustZoom(doc);
+    }
 }
 
 void receiveBluetootCallback(String message)
 {
     StaticJsonDocument<1024> doc;
     if (deserializeJson(doc, message))
-    {
-        Serial.println("Error: Failed to parse JSON");
         return;
-    }
-
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(60);
 
 #if SERIAL_DEBUG
-    Serial.println("[INFO]\tMessage received: ");
+    Serial.println("[INFO]\t Message received: ");
     serializeJsonPretty(doc, Serial);
     Serial.println();
 #endif
 
-    if (doc.containsKey("sendInterval"))
-    {
-        unsigned long sendInterval = doc["sendInterval"];
-        if (checkSendInterval(sendInterval))
-            storage.save();
-    }
-    else if (doc.containsKey("bluetoothName"))
-    {
-        String bluetoothName = doc["bluetoothName"];
-        if (checkBluetoothName(bluetoothName))
-            storage.save();
-    }
+    if (!doc.containsKey("command") || !doc.containsKey("value"))
+        return;
 
-    else if (doc.containsKey("zoom"))
-    {
-        int zoom = doc["zoom"];
-        if (zoom != ctx.zoom)
-        {
-            ctx.zoom = zoom;
-            Serial.print("[INFO]\tSetting zoom to: ");
-            Serial.println(zoom);
-        }
-    }
-    else if (doc.containsKey("reboot"))
-    {
-        if (doc["reboot"] == true)
-        {
-            Serial.println("[INFO]\tRebooting device");
-            ESP.restart();
-        }
-    }
+    digitalWrite(LED_BUILTIN, HIGH);
 
-    else if (doc.containsKey("reset"))
-    {
-        if (doc["reset"] == true)
-        {
-            storage.reset();
-            storage.save();
-            Serial.println("[INFO]\tResetting device");
-        }
-    }
-
-    doc.clear();
+    String command = doc["command"].as<String>();
+    JsonObject jsonObject = doc.as<JsonObject>();
+    handleCommand(command, jsonObject);
     digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -114,22 +134,26 @@ void receiveBluetootCallback(String message)
 // Button Callbacks
 // --------------------------------------------------------------------------------------------
 
-void zoomInCallback()
+void zoomIn()
 {
     ctx.zoom = ctx.zoom + 1;
     if (ctx.zoom > MAX_ZOOM)
         ctx.zoom = MAX_ZOOM;
 
-    Serial.print("[INFO]\tSetting zoom in to: ");
+#if SERIAL_DEBUG
+    Serial.print("[INFO]\t Setting zoom in to: ");
     Serial.println(ctx.zoom);
+#endif
 }
 
-void zoomOutCallback()
+void zoomOut()
 {
     ctx.zoom = ctx.zoom - 1;
     if (ctx.zoom < MIN_ZOOM)
         ctx.zoom = MIN_ZOOM;
 
-    Serial.print("[INFO]\tSetting zoom out to: ");
+#if SERIAL_DEBUG
+    Serial.print("[INFO]\t Setting zoom out to: ");
     Serial.println(ctx.zoom);
+#endif
 }

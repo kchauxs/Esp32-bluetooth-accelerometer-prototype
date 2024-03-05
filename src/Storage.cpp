@@ -18,6 +18,7 @@ void Storage::reset()
 {
     _ctx->bluetoothName = BLUETOOTH_NAME;
     _ctx->sendInterval = DEFAULT_SEND_INTERVAL;
+    _ctx->brightness = DEFAULT_BRIGHTNESS;
 }
 
 bool Storage::read()
@@ -37,8 +38,10 @@ bool Storage::read()
     {
         _ctx->bluetoothName = jsonConfig["bluetoothName"].as<String>();
         _ctx->sendInterval = jsonConfig["sendInterval"].as<long>();
+        _ctx->brightness = jsonConfig["brightness"].as<uint8_t>();
 
 #if SERIAL_DEBUG
+        Serial.println("[INFO]\t Read config: ");
         serializeJsonPretty(jsonConfig, Serial);
         Serial.println();
 #endif
@@ -50,15 +53,20 @@ bool Storage::read()
 
 bool Storage::save()
 {
+    if (!_isInit)
+        return false;
+
     StaticJsonDocument<1024> jsonConfig;
     File file = SPIFFS.open(F("/settingdevice.json"), "w+");
     if (file)
     {
         jsonConfig["bluetoothName"] = _ctx->bluetoothName;
         jsonConfig["sendInterval"] = _ctx->sendInterval;
+        jsonConfig["brightness"] = _ctx->brightness;
         serializeJsonPretty(jsonConfig, file);
 
 #if SERIAL_DEBUG
+        Serial.println("[INFO]\t Save config: ");
         serializeJsonPretty(jsonConfig, Serial);
         Serial.println();
 #endif

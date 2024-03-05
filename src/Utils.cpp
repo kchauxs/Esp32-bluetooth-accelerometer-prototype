@@ -16,11 +16,12 @@ String Utils::buildPayload()
     doc["gyro"]["z"] = _ctx->gyro.z;
     doc["mpuTemp"] = _ctx->mpuTemp;
     doc["zoom"] = _ctx->zoom;
-    doc["sendInterval"] = _ctx->sendInterval;
+    doc["interval"] = _ctx->sendInterval;
+    doc["brightness"] = _ctx->brightness;
+    
 
     String payload;
     serializeJson(doc, payload);
-    doc.clear();
     return payload;
 }
 

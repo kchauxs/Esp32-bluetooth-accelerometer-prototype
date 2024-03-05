@@ -11,11 +11,11 @@
 #define NUM_LEDS 1
 #define LED_DATA_PIN D8
 #define LED_TYPE NEOPIXEL
-#define LED_BRIDHTNESS 128
+#define DEFAULT_BRIGHTNESS 116
 
 // DATA CONFIG
 #define DEFAULT_SEND_INTERVAL 1000
-#define MIN_SEND_INTERVAL 250   // 100 Milliseconds
+#define MIN_SEND_INTERVAL 300   // 300 Milliseconds
 #define MAX_SEND_INTERVAL 60000 // 60 Seconds
 
 #define DEFAULT_ZOOM 1
