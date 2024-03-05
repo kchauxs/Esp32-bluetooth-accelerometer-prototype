@@ -123,6 +123,7 @@ void receiveBluetootCallback(String message)
         return;
 
     digitalWrite(LED_BUILTIN, HIGH);
+    delay(30);
 
     String command = doc["command"].as<String>();
     JsonObject jsonObject = doc.as<JsonObject>();

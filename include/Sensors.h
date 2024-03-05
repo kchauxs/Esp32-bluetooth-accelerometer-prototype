@@ -13,6 +13,8 @@
 class Sensors
 {
 private:
+
+    bool _isMPUInit = false;
     Adafruit_MPU6050 _mpu;
     Context *_ctx;
 

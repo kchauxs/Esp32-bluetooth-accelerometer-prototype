@@ -22,11 +22,15 @@ bool Sensors::initMPU()
     _mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
     _mpu.setGyroRange(MPU6050_RANGE_500_DEG);
     _mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+    _isMPUInit = true;
     return true;
 }
 
 void Sensors::readGyro()
 {
+    if (!_isMPUInit)
+        return;
+
     sensors_event_t a, g, temp;
     _mpu.getEvent(&a, &g, &temp);
 
@@ -45,6 +49,8 @@ void Sensors::readGyro()
 
 void Sensors::readAccel()
 {
+    if (!_isMPUInit)
+        return;
     sensors_event_t a, g, temp;
     _mpu.getEvent(&a, &g, &temp);
 
@@ -55,6 +61,8 @@ void Sensors::readAccel()
 
 void Sensors::readTemp()
 {
+    if (!_isMPUInit)
+        return;
     sensors_event_t a, g, temp;
     _mpu.getEvent(&a, &g, &temp);
 
@@ -63,6 +71,8 @@ void Sensors::readTemp()
 
 void Sensors::readMPU()
 {
+    if (!_isMPUInit)
+        return;
     sensors_event_t a, g, temp;
     _mpu.getEvent(&a, &g, &temp);
 
@@ -93,6 +103,9 @@ void Sensors::loop()
     static unsigned long lastGyroRead = 0;
     static unsigned long lastAccelRead = 0;
     static unsigned long lastTempRead = 0;
+
+    if (!_isMPUInit)
+        return;
 
     if ((millis() - lastGyroRead) > 10)
     {

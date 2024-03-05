@@ -41,7 +41,7 @@ bool Storage::read()
         _ctx->brightness = jsonConfig["brightness"].as<uint8_t>();
 
 #if SERIAL_DEBUG
-        Serial.println("[INFO]\t Read config: ");
+        Serial.println("\n[INFO]\t Read config: ");
         serializeJsonPretty(jsonConfig, Serial);
         Serial.println();
 #endif
@@ -66,7 +66,7 @@ bool Storage::save()
         serializeJsonPretty(jsonConfig, file);
 
 #if SERIAL_DEBUG
-        Serial.println("[INFO]\t Save config: ");
+        Serial.println("\n[INFO]\t Save config: ");
         serializeJsonPretty(jsonConfig, Serial);
         Serial.println();
 #endif
