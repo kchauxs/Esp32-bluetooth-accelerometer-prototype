@@ -28,10 +28,9 @@ public:
     float mpuTemp = 0;
 
     String bluetoothName = BLUETOOTH_NAME;
-
-    unsigned int zoom = DEFAULT_ZOOM;
-    unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
+    uint8_t zoom = DEFAULT_ZOOM;
     uint8_t brightness = DEFAULT_BRIGHTNESS;
+    unsigned long sendInterval = DEFAULT_SEND_INTERVAL;
 
     static Context *getInstance()
     {

@@ -78,7 +78,7 @@ void resetConfiguration(const JsonObject &doc)
 
 void adjustZoom(const JsonObject &doc)
 {
-    int value = doc["value"].as<int>();
+    uint8_t value = doc["value"].as<uint8_t>();
     if (value != ctx->zoom && value >= 0 && value <= MAX_ZOOM)
         ctx->zoom = value;
 }
