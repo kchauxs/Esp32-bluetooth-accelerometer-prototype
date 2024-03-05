@@ -40,7 +40,7 @@ void adjustBrightness(const JsonObject &doc)
     if (brightness > 0 && brightness <= 255)
     {
         ctx.brightness = brightness;
-        // FastLED.setBrightness(ctx.brightness);
+        FastLED.setBrightness(ctx.brightness);
         storage.save();
     }
 }
