@@ -12,12 +12,6 @@ const String REBOOT_KEY = "REBOOT";
 const String RESET_KEY = "RESET";
 const String ZOOM_KEY = "ZOOM";
 
-String payloadCallback()
-{
-    String payload = utils.buildPayload();
-    return payload;
-}
-
 void changeBluetoothName(const JsonObject &doc)
 {
     String bluetoothName = doc["value"].as<String>();
@@ -135,6 +129,12 @@ void receiveBluetootCallback(String message)
     digitalWrite(LED_BUILTIN, LOW);
 }
 
+String payloadCallback()
+{
+    String payload = utils.buildPayload();
+    return payload;
+}
+
 //---------------------------------------------------------------------------------------------
 // Button Callbacks
 // --------------------------------------------------------------------------------------------
@@ -144,11 +144,6 @@ void zoomIn()
     ctx->zoom = ctx->zoom + 1;
     if (ctx->zoom > MAX_ZOOM)
         ctx->zoom = MAX_ZOOM;
-
-#if SERIAL_DEBUG
-    Serial.print("[INFO]\t Setting zoom in to: ");
-    Serial.println(ctx->zoom);
-#endif
 }
 
 void zoomOut()
@@ -156,9 +151,4 @@ void zoomOut()
     ctx->zoom = ctx->zoom - 1;
     if (ctx->zoom < MIN_ZOOM)
         ctx->zoom = MIN_ZOOM;
-
-#if SERIAL_DEBUG
-    Serial.print("[INFO]\t Setting zoom out to: ");
-    Serial.println(ctx->zoom);
-#endif
 }
