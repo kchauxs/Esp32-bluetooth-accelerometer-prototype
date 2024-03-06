@@ -5,11 +5,11 @@
 
 // DEVICE CONFIG
 #define SERIAL_DEBUG true
-#define BUTTON_PIN D7
+#define BUTTON_PIN T6
 
 // RGB LEDS
 #define NUM_LEDS 1
-#define LED_DATA_PIN D8
+#define LED_DATA_PIN T7
 #define LED_TYPE NEOPIXEL
 #define DEFAULT_BRIGHTNESS 116
 
